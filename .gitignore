@@ -1,0 +1,36 @@
+# --- DEM rasters -------------------------------------------------------------
+# The data pack is ~4.9 GB and several rasters exceed GitHub's 100 MB per-file
+# limit, so the elevation data is not tracked. The directory structure and the
+# label shapefiles are kept, so dropping the DEMs back into
+# CinderConesDataPack/ is enough to run the notebook.
+*.tif
+*.TIF
+*.tiff
+*.TIFF
+*.ovr
+*.img
+*.IMG
+*.edu
+*.eduard
+
+# Esri ArcInfo binary grid (ElHierro/DEM/dem5m)
+*.adf
+*.ADF
+arc.dir
+arc0*.dat
+arc0*.nit
+w001001*
+
+# --- local tooling -----------------------------------------------------------
+.claude/
+.ipynb_checkpoints/
+__pycache__/
+
+# Submission bundle: duplicates the notebook, report and figures already tracked
+consegna_scoria_cones.zip
+
+# Internal working notes, not part of the deliverable
+SESSION_HANDOFF.md
+
+# Superseded notebooks, kept locally only
+archive/
