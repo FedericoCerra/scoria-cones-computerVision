@@ -147,9 +147,7 @@ to use it as a classifier feature later.
 
 Patches for the classifier are cropped from the detrended layer: raw
 elevation carries the regional trend and absolute height, so two identical cones on
-different flanks of the island would produce very different patches. Each crop is also
-normalized on its own (subtract its mean, divide by its std) before HOG, removing what
-is left of the absolute scale.
+different flanks of the island would produce very different patches.
 
 ### 5.2 Proposal stage
 
@@ -222,8 +220,7 @@ Result: train = 136 cones (26 crater-fallback) + 2634 hard negatives, validation
 
 ### 5.4 Verification classifier
 
-Each 64x64 patch is normalized on its own (subtract its mean, divide by its std, so only
-the shape matters and not the absolute height), then HOG is applied. HOG describes which
+HOG is applied directly to each 64x64 patch. HOG describes which
 way the surface slopes and how strongly in each part of the patch, which fits a cone's
 radial flank pattern. The classifier is an RBF SVM with class_weight="balanced", because
 the dataset is about 1:18 cones vs hard negatives and an unweighted SVM could just answer
