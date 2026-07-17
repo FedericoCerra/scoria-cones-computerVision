@@ -432,9 +432,9 @@ are somewhat better than the table says.
 ## 7. Conclusions
 
 Are the results good enough? The detector reaches a detection F1 of
-about 0.47 on the site it was trained on, and clearly less than that on Etna, so as a
-tool you could actually use to map cones automatically it is not there yet: it finds
-roughly half of the cones and still lets through a fair number of false positives.
+about 0.47 on the site it was trained on, and clearly less than that on Etna. In
+practice it finds roughly half of the cones and still lets through a fair number of
+false positives, so a human would still have to check every map it produces.
 
 I think the main reasons are both the approach and the lack of data. The pipeline
 is assembled from hand-designed pieces, a blob detector for the proposals and HOG plus an
