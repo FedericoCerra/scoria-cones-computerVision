@@ -257,13 +257,15 @@ Here adding a slope histogram and training on only the craters that had a clean 
 
 | configuration | precision | recall | F1 |
 |---|---|---|---|
-| baseline: HOG, all cones in training | 0.488 | 0.678 | 0.567 |
-| HOG + slope histogram | 0.465 | 0.678 | 0.552 |
-| HOG, clean cones only in training | 0.536 | 0.508 | 0.522 |
-| HOG + slope, clean cones only | 0.500 | 0.492 | 0.496 |
+| HOG, all cones (baseline) | 0.488 | 0.678 | 0.567 |
+| HOG + slope, all cones | 0.465 | 0.678 | 0.552 |
+| HOG, clean cones | 0.536 | 0.508 | 0.522 |
+| HOG + slope, clean cones (chosen) | 0.500 | 0.492 | 0.496 |
 
 Neither idea beats the baseline here: the slope histogram changes little, and training on
-the clean cones only trades some recall for a little precision.
+the clean cones only trades some recall for a little precision. The chosen mark
+anticipates 5.6: the pick is made at detection level, where this ranking flips, and at
+patch level the chosen config is actually the weakest of the four.
 
 #### CNN instead of HOG + SVM
 
@@ -272,9 +274,9 @@ Just for a quick comparison.
 
 | verifier | precision | recall | F1 |
 |---|---|---|---|
-| chosen HOG + SVM | 0.500 | 0.492 | 0.496 |
-| CNN, all cones in training | 0.303 | 0.729 | 0.428 |
-| CNN, clean cones only | 0.331 | 0.712 | 0.452 |
+| chosen SVM (HOG + slope, clean cones) | 0.500 | 0.492 | 0.496 |
+| CNN, all cones | 0.303 | 0.729 | 0.428 |
+| CNN, clean cones | 0.331 | 0.712 | 0.452 |
 
 On El Hierro patches the two approaches are roughly tied.
 
@@ -284,7 +286,7 @@ What if we used directly the detrended pixels?
 
 | configuration | precision | recall | F1 |
 |---|---|---|---|
-| baseline: HOG, all cones in training | 0.488 | 0.678 | 0.567 |
+| HOG, all cones (baseline) | 0.488 | 0.678 | 0.567 |
 | pixels only | 0.483 | 0.712 | 0.575 |
 | HOG + slope + pixels | 0.698 | 0.746 | 0.721 |
 
@@ -293,11 +295,11 @@ is also the most misleading.
 
 #### Other classifier heads
 
-Same pipeline, only the learning algorithm swapped.
+Same features and training set (HOG + slope, all cones), only the classifier swapped.
 
 | classifier | patch F1 |
 |---|---|
-| RBF SVM (the pipeline's) | 0.552 |
+| RBF SVM | 0.552 |
 | linear SVM | 0.335 |
 | logistic regression | 0.330 |
 | random forest (500 trees) | 0.479 |
@@ -308,29 +310,31 @@ Same pipeline, only the learning algorithm swapped.
 ### 5.6 The same comparisons at detection level
 
 Now we use the same verifiers on the actual DoG candidates,
-framed off-center and at the wrong size, matched one-to-one to the validation cones.
+framed off-center and at the wrong size, matched one-to-one to the validation cones. The
+candidates keep their raw DoG radii here: the radius correction of 5.3 enters only in the
+final evaluation, which is why the chosen config scores F1 0.425 in this section but
+0.472 in section 6.1.
 
 #### Feature and label ablations
 
-| configuration | precision | recall | F1 |
-|---|---|---|---|
-| baseline: HOG, all cones | 0.532 | 0.424 | 0.472 |
-| HOG + slope | 0.364 | 0.475 | 0.412 |
-| HOG, clean cones only | 0.449 | 0.373 | 0.407 |
-| HOG + slope, clean cones only (chosen) | 0.444 | 0.407 | 0.425 |
+| configuration | precision | recall | F1 | detections |
+|---|---|---|---|---|
+| HOG, all cones (baseline) | 0.384 | 0.475 | 0.424 | 73 |
+| HOG + slope, all cones | 0.364 | 0.475 | 0.412 | 77 |
+| HOG, clean cones | 0.449 | 0.373 | 0.407 | 49 |
+| HOG + slope, clean cones (chosen) | 0.444 | 0.407 | 0.425 | 54 |
 
 The ranking is different from patch level: the baseline, best on patches, is not the best
 detector, and the chosen config has the top detection F1 (0.425), a hair above the baseline
-(0.424). The four are within noise (0.41-0.43, 59 cones), so the configuration choice
-matters far less than the patch framing (see 6.1). The chosen config is carried forward.
+(0.424). The four are within noise (F1 0.407-0.425 on 59 cones).
 
 #### CNN instead of HOG + SVM
 
-| verifier | precision | recall | F1 |
-|---|---|---|---|
-| chosen HOG + SVM | 0.532 | 0.424 | 0.472 |
-| CNN, all cones in training | 0.176 | 0.373 | 0.239 |
-| CNN, clean cones only | 0.189 | 0.339 | 0.242 |
+| verifier | precision | recall | F1 | detections |
+|---|---|---|---|---|
+| chosen SVM (HOG + slope, clean cones) | 0.444 | 0.407 | 0.425 | 54 |
+| CNN, all cones | 0.176 | 0.373 | 0.239 | 125 |
+| CNN, clean cones | 0.189 | 0.339 | 0.242 | 106 |
 
 Tied on patches, the CNN is clearly behind at detection level, about half the SVM's F1.
 The gap widens further cross-site on Etna (6.2).
@@ -339,7 +343,7 @@ The gap widens further cross-site on Etna (6.2).
 
 | verifier | precision | recall | F1 | detections |
 |---|---|---|---|---|
-| baseline HOG | 0.384 | 0.475 | 0.424 | 73 |
+| HOG, all cones (baseline) | 0.384 | 0.475 | 0.424 | 73 |
 | pixels only | 0.167 | 0.153 | 0.159 | 54 |
 | HOG + slope + pixels | 0.500 | 0.322 | 0.392 | 38 |
 
@@ -352,7 +356,7 @@ few pixels of shift.
 
 | classifier | precision | recall | F1 | detections |
 |---|---|---|---|---|
-| RBF SVM (the pipeline's) | 0.364 | 0.475 | 0.412 | 77 |
+| RBF SVM | 0.364 | 0.475 | 0.412 | 77 |
 | linear SVM | 0.152 | 0.525 | 0.236 | 204 |
 | logistic regression | 0.153 | 0.525 | 0.237 | 203 |
 | random forest (500 trees) | 0.288 | 0.508 | 0.368 | 104 |
