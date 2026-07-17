@@ -1,6 +1,6 @@
 # Scoria Cone Detection in Digital Elevation Models
 
-Computer Vision final project - Federico Cerra
+Computer Vision final project - Federico Cerra S5513839
 
 ## 1. Introduction
 
